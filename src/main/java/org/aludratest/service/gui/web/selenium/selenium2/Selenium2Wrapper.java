@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -1427,13 +1428,44 @@ public class Selenium2Wrapper {
     }
 
     public void addCookie(String name, String value, String domain, String path, int expiry) {
+        Date exp;
+        String dom = domain;
         if (-1 >= expiry) {
-            driver.manage().addCookie(new Cookie(name, value, domain, path, null));
-            return;
+            exp = null;
         }
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, expiry);
-        driver.manage().addCookie(new Cookie(name, value, domain, path, cal.getTime()));
+        else {
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.SECOND, expiry);
+            exp = cal.getTime();
+        }
+        if (null == domain) {
+            String sUrl = driver.getCurrentUrl();
+            if (sUrl == null) {
+                throw new AutomationException("Cannot determine domain name for cookie - no current URL in browser");
+            }
+
+            try {
+                URL url = new URL(sUrl);
+                dom = hostToDomain(url.getHost());
+            }
+            catch (MalformedURLException e) {
+                throw new TechnicalException("Invalid current URL in browser", e);
+            }
+        }
+        driver.manage().addCookie(new Cookie(name, value, dom, path, exp));
+    }
+
+    private String hostToDomain(String host) {
+        String domain = null;
+        Pattern pattern = Pattern.compile("^.*(\\.[^\\.]+\\.[^\\.]+)$");
+        Matcher m = pattern.matcher(host);
+        if (m.matches()) {
+            domain = m.group(1);
+        }
+        else {
+            domain = "." + host;
+        }
+        return domain;
     }
 
     public void zoom(int percent) {
