@@ -126,6 +126,11 @@ public class Selenium2Interaction extends AbstractSelenium2Action implements Web
     // text operations ---------------------------------------------------------
 
     @Override
+    public void clear(String elementType, String operation, GUIElementLocator locator, int taskCompletionTimeout) {
+        wrapper.clear(locator, taskCompletionTimeout);
+    }
+
+    @Override
     public void type(String elementType, String operation, GUIElementLocator locator, String text,
             int taskCompletionTimeout) {
         wrapper.type(locator, (text == null ? "" : text), taskCompletionTimeout);

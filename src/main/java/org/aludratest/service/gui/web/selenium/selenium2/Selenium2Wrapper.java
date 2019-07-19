@@ -344,6 +344,11 @@ public class Selenium2Wrapper {
         doAfterDelegate(taskCompletionTimeout, "select");
     }
 
+    public void clear(GUIElementLocator locator, int taskCompletionTimeout) {
+        WebElement element = doBeforeDelegate(locator, true, true, true);
+        element.clear();
+    }
+
     public void type(GUIElementLocator locator, final String value, int taskCompletionTimeout) {
         WebElement element = doBeforeDelegate(locator, true, true, true);
 
