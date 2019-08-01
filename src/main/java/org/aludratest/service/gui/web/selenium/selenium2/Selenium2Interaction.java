@@ -272,6 +272,11 @@ public class Selenium2Interaction extends AbstractSelenium2Action implements Web
     }
 
     @Override
+    public void scrollIntoView(String elementType, String operation, GUIElementLocator locator) {
+        wrapper.scrollIntoView(locator);
+    }
+
+    @Override
     public void addCustomHttpHeaderCommand(String key, String value) {
         wrapper.addCustomRequestHeader(key, value);
     }

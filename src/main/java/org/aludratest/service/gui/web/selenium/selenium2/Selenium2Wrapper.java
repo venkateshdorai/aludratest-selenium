@@ -710,6 +710,12 @@ public class Selenium2Wrapper {
         executeScript("arguments[0].focus()", element);
     }
 
+    public void scrollIntoView(GUIElementLocator locator) {
+        LOGGER.debug("scrollIntoView({})", locator);
+        WebElement element = waitUntilPresent(locator, configuration.getTimeout());
+        executeScript("arguments[0].scrollIntoView()", element);
+    }
+
     public String getAttributeValue(final GUIElementLocator locator, String attributeName) {
         WebElement element = doBeforeDelegate(locator, true, false, false);
         LOGGER.debug("WebElement.getAttributeValue({})", attributeName);
