@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.aludratest.exception.AutomationException;
 import org.aludratest.exception.FunctionalFailure;
+import org.aludratest.service.TechnicalLocator;
 import org.aludratest.service.gui.web.WebGUIInteraction;
 import org.aludratest.service.gui.web.selenium.util.DocCache;
 import org.aludratest.service.locator.element.GUIElementLocator;
@@ -274,6 +275,11 @@ public class Selenium2Interaction extends AbstractSelenium2Action implements Web
     @Override
     public void scrollIntoView(String elementType, String operation, GUIElementLocator locator) {
         wrapper.scrollIntoView(locator);
+    }
+
+    @Override
+    public String getCssValue(String propertyName, @TechnicalLocator GUIElementLocator locator) {
+        return wrapper.getCSSValue(propertyName, locator);
     }
 
     @Override
