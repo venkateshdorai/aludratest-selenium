@@ -423,6 +423,11 @@ public class Selenium2Wrapper {
         return getValue(findElementImmediately(locator));
     }
 
+    public String getCSSValue(String propertyName, GUIElementLocator locator) {
+        LOGGER.debug("getCSSValue({})", propertyName);
+        return getCssValue(propertyName, findElementImmediately(locator));
+    }
+
     // window operations -------------------------------------------------------
 
     @SuppressWarnings("unchecked")
@@ -1288,6 +1293,12 @@ public class Selenium2Wrapper {
     private String getValue(WebElement element) {
         LOGGER.debug("getValue(WebElement)");
         return element.getAttribute("value");
+    }
+
+    private String getCssValue(String propertyName, WebElement element) {
+        LOGGER.debug("getCssValue(WebElement)");
+        String ret = element.getCssValue(propertyName);
+        return ret;
     }
 
     private void setValue(WebElement element, String value) {
