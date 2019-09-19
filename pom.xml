@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aludratest-selenium</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.2.0-SNAPSHOT</version>
 	<name>AludraTest Selenium Service</name>
 	<description>Enables functional testing of web applications using the AludraTest Service API and Selenium as underlying automation engine.</description>
 
@@ -14,7 +14,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<aludratest.version>3.1.0-SNAPSHOT</aludratest.version>
+		<aludratest.version>3.2.0-SNAPSHOT</aludratest.version>
 		<aludratest.testing-harness.version>3.1.0-SNAPSHOT</aludratest.testing-harness.version>
 		<!-- should be set explicitly when local tests are executed -->
 		<phantomjs.binary.path>phantomjs</phantomjs.binary.path>
@@ -191,6 +191,11 @@
 					</execution>
 				</executions>
 			</plugin>
+		<plugin>
+		    <groupId>org.apache.maven.plugins</groupId>
+		    <artifactId>maven-deploy-plugin</artifactId>
+		    <version>2.8.2</version>
+		</plugin>
 		</plugins>
 	</build>
 	
@@ -199,7 +204,7 @@
 		<url>https://github.com/AludraTest/${project.artifactId}/issues</url>
 		<system>GitHub Issues</system>
 	</issueManagement>
-
+<!-- 
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -210,10 +215,10 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 		<site>
-			<!-- this is not used at all, as GitHub site-deploy is used. But site 
-				Plugin requires this to be here to work! -->
+			this is not used at all, as GitHub site-deploy is used. But site 
+				Plugin requires this to be here to work!
 			<id>local-dummy</id>
 			<url>file:/./target/site-deployment</url>
 		</site>
-	</distributionManagement>
+	</distributionManagement> -->
 </project>

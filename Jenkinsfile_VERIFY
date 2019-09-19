@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+    tools {
+        maven "${MAVEN_DIST}"
+        jdk "${JAVA_DIST}"
+    }
+    stages {
+        stage('prepare') {
+            steps {
+                sh '''
+          # ensure that POM Version is snapshot
+          POM_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args=\'${project.version}\' org.codehaus.mojo:exec-maven-plugin:1.6.0:exec)
+          PATTERN='[0-9]+(\\.[0-9]+)*-SNAPSHOT'
+          [[ $POM_VERSION =~ $PATTERN ]] || ( echo "[ERROR] POM version $POM_VERSION is not a snapshot version with pattern $PATTERN"; exit 1 )
+          '''
+            }
+        }
+        stage('test and analysis') {
+            environment {
+                sonarqube = "$SONARQUBE_DIST"
+            }
+            steps {
+                withSonarQubeEnv(sonarqube) {
+                    script {
+                        SONAR_BRANCH = "VERIFY"
+                        sh """
+              mvn -s ${MAVEN_SETTINGS} clean verify -Dsonar.branch=${SONAR_BRANCH} ${SONAR_MAVEN_GOAL} -B -U
+            """
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            junit testResults: '**/target/surefire-reports/**/*.xml', allowEmptyResults: true
+        }
+    }
+}

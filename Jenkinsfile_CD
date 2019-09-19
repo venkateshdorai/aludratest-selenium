@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    tools {
+        maven "${MAVEN_DIST}"
+        jdk "${JAVA_DIST}"
+    }
+    stages {
+        stage('build') {
+            environment {
+                sonarqube = "$SONARQUBE_DIST"
+            }
+            steps {
+                withSonarQubeEnv(sonarqube) {
+                    script {
+                        sh '''
+              # In POM Version: replace "-SNAPSHOT" with the current Jenkins build number.
+              POM_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args=\'${project.version}\' org.codehaus.mojo:exec-maven-plugin:1.6.0:exec)
+              NEW_VERSION=$(echo ${POM_VERSION} | sed "s/-SNAPSHOT/-${BUILD_NUMBER}/g")
+              mvn -B -DnewVersion=$NEW_VERSION org.codehaus.mojo:versions-maven-plugin:2.5:set
+              mvn -s ${MAVEN_SETTINGS} -Dkarma.npm.script=karma-selenium-test -Dsonar.branch=${BRANCH_NAME} -DaltReleaseDeploymentRepository=${ARTIFACTORY_REPO_ID:?}::default::${ARTIFACTORY_URL:?}/${ARTIFACTORY_REPO:?} clean test ${SONAR_MAVEN_GOAL} deploy -B -U
+            '''
+                    }
+                }
+            }
+        }
+        stage('publish') {
+            steps {
+                junit testResults: '**/target/surefire-reports/**/*.xml', allowEmptyResults: true
+            }
+        }
+    }
+    post {
+        success {
+            echo 'CI successful'
+        }
+        failure {
+            emailext subject: 'Jenkins Job ${JOB_NAME} build ${BUILD_NUMBER} failed',
+                    body: 'Build URL: ${BUILD_URL}',
+                    recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'CulpritsRecipientProvider']]
+        }
+        unstable {
+            emailext subject: 'Jenkins Job ${JOB_NAME} build ${BUILD_NUMBER} unstable',
+                    body: 'Build URL: ${BUILD_URL}',
+                    recipientProviders: [[$class: 'DevelopersRecipientProvider'], [$class: 'CulpritsRecipientProvider']]
+        }
+    }
+}
